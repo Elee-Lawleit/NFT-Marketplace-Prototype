@@ -1,6 +1,17 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import type { AppProps } from "next/app"
+import "react-toastify/dist/ReactToastify.css"
+import Layout from "../components/Layout"
+import "../styles/globals.css"
+import { SignerProvider } from "@/state/nft-market/signer"
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+const MyApp = ({ Component, pageProps }: AppProps) => {
+  return (
+    <SignerProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </SignerProvider>
+  )
 }
+
+export default MyApp
