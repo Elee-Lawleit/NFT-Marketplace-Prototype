@@ -15,10 +15,14 @@ const handler: NextApiHandler = async (req, res) => {
       const uploadDir = `${process.cwd()}/tmp`
       const form = formidable({ multiples: true, uploadDir })
       form.parse(req, (err, fields, files) => {
-        if (err) rej(err)
+        if (err) {
+          console.log("error: ", err)
+          rej(err)
+        }
         res({ ...fields, ...files })
       })
     })
+
     // Read image from /tmp
     const {
       filepath,
@@ -27,14 +31,14 @@ const handler: NextApiHandler = async (req, res) => {
     } = data.image
     const buffer = readFileSync(data.image.filepath)
     const arraybuffer = Uint8Array.from(buffer).buffer
-    const blob = new File([arraybuffer], originalFilename, {
+    const file = new File([arraybuffer], originalFilename, {
       type: mimetype,
     })
     // Upload data to nft.storage
     const metadata = await client.store({
       name: data.name,
       description: data.description,
-      image: blob,
+      image: file,
     })
     // Delete tmp image
     unlinkSync(filepath)

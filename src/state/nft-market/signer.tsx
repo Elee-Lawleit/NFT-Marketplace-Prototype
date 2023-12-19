@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers"
 import { ReactNode } from "react"
 import Web3Modal from "web3modal"
@@ -20,10 +20,18 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
   const [address, setAddress] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
 
+  useEffect(()=>{
+    const web3mdoal = new Web3Modal();
+    if(web3mdoal.cachedProvider) {
+      connectWallet()
+    }
+
+  }, [])
+
   const connectWallet = async () => {
     setLoading(true)
     try {
-      const web3modal = new Web3Modal()
+      const web3modal = new Web3Modal({cacheProvider: true})
       const instance = await web3modal.connect()
       const provider = new Web3Provider(instance) //
       const signer = provider.getSigner()

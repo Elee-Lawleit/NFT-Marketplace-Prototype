@@ -16,7 +16,7 @@
     "formidable": "2.0.1",
     "formik": "2.2.9",
     "next": "14.0.4",
-    "nft.storage": "6.0.0",
+    "nft.storage": "7.1.1",
     "react": "^18",
     "react-blockies": "^1.4.1",
     "react-dom": "^18",
