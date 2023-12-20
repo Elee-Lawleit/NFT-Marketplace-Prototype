@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: NFTMarket
@@ -17,8 +17,8 @@ dataSources:
         - NFTTransfer
       abis:
         - name: NFTMarket
-          file: ./abis/NFTMarket.json
+          file: NFTMarket\abis\NFTMarket.json
       eventHandlers:
         - event: NFTTransfer(uint256,address,address,string,uint256)
           handler: handleNFTTransfer
-      file: ./src/nft-market.ts
+      file: NFTMarket\NFTMarket.wasm

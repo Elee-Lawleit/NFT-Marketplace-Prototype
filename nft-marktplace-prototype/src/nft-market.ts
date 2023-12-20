@@ -1,92 +1,23 @@
+//this is the mapping file
 import {
-  Approval as ApprovalEvent,
-  ApprovalForAll as ApprovalForAllEvent,
+  NFTMarket,
   NFTTransfer as NFTTransferEvent,
-  OwnershipTransferred as OwnershipTransferredEvent,
-  Transfer as TransferEvent
 } from "../generated/NFTMarket/NFTMarket"
-import {
-  Approval,
-  ApprovalForAll,
-  NFTTransfer,
-  OwnershipTransferred,
-  Transfer
-} from "../generated/schema"
-
-export function handleApproval(event: ApprovalEvent): void {
-  let entity = new Approval(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.owner = event.params.owner
-  entity.approved = event.params.approved
-  entity.tokenId = event.params.tokenId
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleApprovalForAll(event: ApprovalForAllEvent): void {
-  let entity = new ApprovalForAll(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.owner = event.params.owner
-  entity.operator = event.params.operator
-  entity.approved = event.params.approved
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
+import { NFT } from "../generated/schema"
 
 export function handleNFTTransfer(event: NFTTransferEvent): void {
-  let entity = new NFTTransfer(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.tokenId = event.params.tokenId
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.tokenURI = event.params.tokenURI
-  entity.price = event.params.price
+  //create new NFT entity (row/document)
+  const nft = new NFT(event.params.tokenId.toString())
+  nft.to = event.params.to
+  nft.from = event.params.from
+  nft.price = event.params.price
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  //binding to the contrac the event was emitted from
+  const nftMarket = NFTMarket.bind(event.address)
+  //getting tokenURI from the contract itself, even better honestly
+  const tokenURI = nftMarket.tokenURI(event.params.tokenId)
+  nft.tokenURI = tokenURI
 
-  entity.save()
-}
-
-export function handleOwnershipTransferred(
-  event: OwnershipTransferredEvent
-): void {
-  let entity = new OwnershipTransferred(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.previousOwner = event.params.previousOwner
-  entity.newOwner = event.params.newOwner
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleTransfer(event: TransferEvent): void {
-  let entity = new Transfer(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.tokenId = event.params.tokenId
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  //finally save the nft entity in database, can think of it saving a row in sql, or a document in mongodb
+  nft.save()
 }
