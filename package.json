@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.8",
     "@ethersproject/providers": "^5.7.2",
     "@headlessui/react": "1.5.0",
     "@heroicons/react": "1.0.5",
@@ -30,6 +31,7 @@
     "@types/react": "^18",
     "@types/react-blockies": "^1.4.4",
     "@types/react-dom": "^18",
+    "apollo": "^2.34.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",

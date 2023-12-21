@@ -1,7 +1,14 @@
+import NFTCard from "@/components/NFTCard";
+import useNFTMarket from "@/state/nft-market";
+
 const OwnedPage = () => {
+
+  const {ownedNFTs} = useNFTMarket()
+  console.log("OWNED: ", ownedNFTs)
+
   return (
     <div className="flex w-full flex-col">
-      {/* Display owned (listed or not) NFTs */}
+      {ownedNFTs?.map((nft) => <NFTCard nft={nft}/>)}
       Owned
     </div>
   );
