@@ -6,6 +6,9 @@ import { TransactionResponse } from "@ethersproject/providers"
 import useOwnedNFTs from "./useOwnedNFTs"
 import useOwnedListedNFTs from "./useOwnedListedNFTs"
 import { NFT_MARKET_ADDRESS } from "./constants"
+import useListedNFTs from "./useListedNFTs"
+import { NFT } from "@/components/NFTCard"
+import { parseEther } from "ethers/lib/utils"
 
 const useNFTMarket = () => {
   const { signer } = useSigner()
@@ -18,6 +21,7 @@ const useNFTMarket = () => {
 
   const ownedNFTs = useOwnedNFTs()
   const ownedListedNFTs = useOwnedListedNFTs()
+  const listedNFTs = useListedNFTs()
 
   const createNFT = async (values: CreationValues) => {
     try {
@@ -52,7 +56,24 @@ const useNFTMarket = () => {
     await tx.wait()
   }
 
-  return { createNFT, listNFT, cancelListing, ...ownedNFTs, ...ownedListedNFTs }
+  //grab the NFT that the user wants to buy
+  const buyNFT = async (nft: NFT) => {
+    //convert the eth price into wei
+    const tx: TransactionResponse = await nftMarket.buyNFT(nft.id, {
+      value: parseEther(nft.price),
+    })
+    await tx.wait()
+  }
+
+  return {
+    createNFT,
+    listNFT,
+    cancelListing,
+    buyNFT,
+    ...ownedNFTs,
+    ...ownedListedNFTs,
+    ...listedNFTs,
+  }
 }
 
 export default useNFTMarket

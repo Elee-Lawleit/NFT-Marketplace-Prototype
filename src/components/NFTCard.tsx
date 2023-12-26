@@ -30,13 +30,12 @@ type NFTCardProps = {
 
 const NFTCard = (props: NFTCardProps) => {
   const { nft, className } = props
-  const {address} = useSigner()
+  const { address } = useSigner()
   const [meta, setMeta] = useState<NFTMetadata>()
   const [loading, setLoading] = useState(false)
   const [sellPopupOpen, setSellPopupOpen] = useState(false)
-  
-  const {listNFT, cancelListing} = useNFTMarket()
 
+  const { listNFT, cancelListing, buyNFT } = useNFTMarket()
 
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -67,7 +66,13 @@ const NFTCard = (props: NFTCardProps) => {
   }
 
   const onBuyClicked = async () => {
-    // TODO: buy NFT
+    setLoading(true)
+    try {
+      await buyNFT(nft)
+    } catch (error) {
+      console.log("Error buying NFT: ", error)
+    }
+    setLoading(true)
   }
 
   const onCancelClicked = async () => {
@@ -83,9 +88,9 @@ const NFTCard = (props: NFTCardProps) => {
   const onSellConfirmed = async (price: BigNumber) => {
     setSellPopupOpen(false)
     setLoading(true)
-    try{
-    await listNFT(nft.id, price)
-    }catch(error){
+    try {
+      await listNFT(nft.id, price)
+    } catch (error) {
       console.log("Error listing NFT: ", error)
     }
     setLoading(false)
@@ -131,17 +136,13 @@ const NFTCard = (props: NFTCardProps) => {
             {!forSale && "SELL"}
             {forSale && owned && (
               <>
-                <span className="group-hover:hidden">
-                  {formatEther(nft.price)} ETH
-                </span>
+                <span className="group-hover:hidden">{nft.price} ETH</span>
                 <span className="hidden group-hover:inline">CANCEL</span>
               </>
             )}
             {forSale && !owned && (
               <>
-                <span className="group-hover:hidden">
-                  {formatEther(nft.price)} ETH
-                </span>
+                <span className="group-hover:hidden">{nft.price} ETH</span>
                 <span className="hidden group-hover:inline">BUY</span>
               </>
             )}
