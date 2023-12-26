@@ -1,5 +1,5 @@
 import { CreationValues } from "@/modules/CreationPage/CreationForm"
-import { Contract } from "ethers"
+import { BigNumber, Contract } from "ethers"
 import NFT_MARKET_CONTRACT_ABI from "../../../../nft-marketplace-contracts/artifacts/contracts/NFTMarket.sol/NFTMarket.json"
 import useSigner from "./signer"
 import { TransactionResponse } from "@ethersproject/providers"
@@ -38,7 +38,14 @@ const useNFTMarket = () => {
     }
   }
 
-  return {createNFT, ...ownedNFTs}
+  const listNFT = async (tokenId: string, price: BigNumber) => {
+    const tx: TransactionResponse = await nftMarket.listNFT(tokenId, price)
+    await tx.wait()
+  }
+
+  return {createNFT,listNFT, ...ownedNFTs}
 }
+
+
 
 export default useNFTMarket

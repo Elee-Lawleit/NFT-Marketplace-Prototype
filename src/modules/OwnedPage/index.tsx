@@ -1,17 +1,19 @@
-import NFTCard from "@/components/NFTCard";
-import useNFTMarket from "@/state/nft-market";
+import NFTCard from "@/components/NFTCard"
+import useNFTMarket from "@/state/nft-market"
 
 const OwnedPage = () => {
-
-  const {ownedNFTs} = useNFTMarket()
+  const { ownedNFTs } = useNFTMarket()
   console.log("OWNED: ", ownedNFTs)
 
   return (
     <div className="flex w-full flex-col">
-      {ownedNFTs?.map((nft) => <NFTCard nft={nft}/>)}
-      Owned
+      <div className="flex flex-wrap">
+        {ownedNFTs?.map((nft) => (
+          <NFTCard className="mr-2 mb-2" key={nft.id} nft={nft} />
+        ))}
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default OwnedPage;
+export default OwnedPage

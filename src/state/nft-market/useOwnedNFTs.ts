@@ -25,7 +25,7 @@ const parseRawNFT = (raw: GetOwnedNFTs_nfts): NFT =>{
   return {
     id: raw.id,
     owner: raw.price == "0" ? raw.to : raw.from,
-    price: parseEther(raw.price).toString(),
+    price: raw.price == "0" ? "0" : parseEther(raw.price).toString(),
     tokenURI: raw.tokenURI
   }
 }
