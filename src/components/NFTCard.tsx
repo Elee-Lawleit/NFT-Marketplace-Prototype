@@ -6,6 +6,7 @@ import AddressAvatar from "./AddressAvatar"
 import SellPopup from "./SellPopup"
 import useSigner from "@/state/nft-market/signer"
 import useNFTMarket from "@/state/nft-market"
+import { formatEther, parseEther } from "ethers/lib/utils"
 
 export type NFT = {
   id: string
@@ -30,10 +31,12 @@ type NFTCardProps = {
 const NFTCard = (props: NFTCardProps) => {
   const { nft, className } = props
   const {address} = useSigner()
-  const {listNFT} = useNFTMarket()
   const [meta, setMeta] = useState<NFTMetadata>()
   const [loading, setLoading] = useState(false)
   const [sellPopupOpen, setSellPopupOpen] = useState(false)
+  
+  const {listNFT, cancelListing} = useNFTMarket()
+
 
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -68,7 +71,13 @@ const NFTCard = (props: NFTCardProps) => {
   }
 
   const onCancelClicked = async () => {
-    // TODO: cancel listing
+    setLoading(true)
+    try {
+      await cancelListing(nft.id)
+    } catch (error) {
+      console.log("Error cancelling listed NFT: ", error)
+    }
+    setLoading(false)
   }
 
   const onSellConfirmed = async (price: BigNumber) => {
@@ -122,13 +131,17 @@ const NFTCard = (props: NFTCardProps) => {
             {!forSale && "SELL"}
             {forSale && owned && (
               <>
-                <span className="group-hover:hidden">{nft.price} ETH</span>
+                <span className="group-hover:hidden">
+                  {formatEther(nft.price)} ETH
+                </span>
                 <span className="hidden group-hover:inline">CANCEL</span>
               </>
             )}
             {forSale && !owned && (
               <>
-                <span className="group-hover:hidden">{nft.price} ETH</span>
+                <span className="group-hover:hidden">
+                  {formatEther(nft.price)} ETH
+                </span>
                 <span className="hidden group-hover:inline">BUY</span>
               </>
             )}

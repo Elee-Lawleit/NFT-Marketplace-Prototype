@@ -4,16 +4,20 @@ import NFT_MARKET_CONTRACT_ABI from "../../../../nft-marketplace-contracts/artif
 import useSigner from "./signer"
 import { TransactionResponse } from "@ethersproject/providers"
 import useOwnedNFTs from "./useOwnedNFTs"
-
-const NFT_MARKET_ADDRESS = process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string
+import useOwnedListedNFTs from "./useOwnedListedNFTs"
+import { NFT_MARKET_ADDRESS } from "./constants"
 
 const useNFTMarket = () => {
+  const { signer } = useSigner()
 
-  const {signer} = useSigner()
-
-  const nftMarket = new Contract(NFT_MARKET_ADDRESS, NFT_MARKET_CONTRACT_ABI.abi, signer);
+  const nftMarket = new Contract(
+    NFT_MARKET_ADDRESS,
+    NFT_MARKET_CONTRACT_ABI.abi,
+    signer
+  )
 
   const ownedNFTs = useOwnedNFTs()
+  const ownedListedNFTs = useOwnedListedNFTs()
 
   const createNFT = async (values: CreationValues) => {
     try {
@@ -31,7 +35,7 @@ const useNFTMarket = () => {
         const json = await response.json()
         console.log("Token URI: ", json.uri)
         const tx: TransactionResponse = await nftMarket.createNFT(json.uri)
-        await tx.wait();
+        await tx.wait()
       }
     } catch (error) {
       console.log(error)
@@ -43,9 +47,12 @@ const useNFTMarket = () => {
     await tx.wait()
   }
 
-  return {createNFT,listNFT, ...ownedNFTs}
+  const cancelListing = async (tokenId: string) => {
+    const tx: TransactionResponse = await nftMarket.cancelListing(tokenId)
+    await tx.wait()
+  }
+
+  return { createNFT, listNFT, cancelListing, ...ownedNFTs, ...ownedListedNFTs }
 }
-
-
 
 export default useNFTMarket
