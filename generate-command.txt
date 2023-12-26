@@ -1,0 +1,1 @@
+pnpm exec apollo client:codegen --localSchemaFile schema.graphql --target=typescript 
