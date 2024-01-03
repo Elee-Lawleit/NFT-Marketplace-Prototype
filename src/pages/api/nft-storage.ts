@@ -29,11 +29,15 @@ const handler: NextApiHandler = async (req, res) => {
       originalFilename = "image",
       mimetype = "image",
     } = data.image
+    console.log("Filepath from data.image: ", data.image.filepath)
     const buffer = readFileSync(data.image.filepath)
+    console.log("buffer: ", buffer);
     const arraybuffer = Uint8Array.from(buffer).buffer
+    console.log("array buffer", arraybuffer)
     const file = new File([arraybuffer], originalFilename, {
       type: mimetype,
     })
+    console.log("FILE: ", file)
     // Upload data to nft.storage
     const metadata = await client.store({
       name: data.name,
@@ -42,6 +46,7 @@ const handler: NextApiHandler = async (req, res) => {
     })
     // Delete tmp image
     unlinkSync(filepath)
+    console.log("Destructured filepath: ", data.image.filepath)
     // return tokenURI
     res.status(201).json({ uri: metadata.url })
   } catch (e) {
